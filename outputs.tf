@@ -9,14 +9,6 @@ output "Kube_contexts" {
 # }
 
 
-output "rds_address" {
-  value = module.Cluster_EKS.rds_address
-}
-
-output "consul_address" {
-  value = module.Cluster_EKS.consul_client_address
-}
-
 output "rds_ip" {
   value = module.Cluster_EKS.RDS_IP
 }
