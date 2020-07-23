@@ -105,6 +105,55 @@ Run the following script: app/01_initial_deploy.sh
 
 This wil install Consul across GKE and EKS, federate the two and install the initial application elements. 
 
+#### Gateway Configuration
+
+Once the initial script has run succesfully, you will have the Mesh Gateway running however extra configuration is needed for the terminating and ingress gateways. 
+
+Two steps are needed to populate the configuration
+
+* Take the IP address that was output from the TF run, and use it to populate app/ext_svc.json
+* Take the public address of your Consul server from the GKE and EKS cluster using the following:
+```
+kubectl config use-context (your GKE context)
+```
+```
+kubectl get svc
+```
+```
+kubectl config use-context (your EKS context)
+```
+```
+kubectl get svc
+```
+
+The public address will be displayed as the External Address for the Consul UI. 
+Copy these public addresses into the file at app/02_gateway_config.sh
+
+Then run app/02_gateway_config.sh
+
+The application is now ready to demo. Access the application through the public address of the ingress gateway on GKE using port 5000. 
+
+
+#### Application Lifecycle
+
+The application uses three images to show different aspects of the Service Mesh. 
+The images are defined in /app/gke_app/gke_app.yaml
+Check line 101
+```yaml
+image: dgkirkwood/frontend:4.1
+```
+The image labels are as follows:
+* 4.1 Three services in a service mesh within a single K8s cluster on GCP
+* 4.2 Three original services with another service in EKS communicating via Mesh Gateway
+* 4.3 All original services as well as the external mysql databse via the terminating gateway and RDS in AWS. 
+
+You can use any of these images, or show then sequentially to build a story. 
+If you change the image tag you can update the Kubernetes deployment with the following command run from /app: 
+```
+kubectl apply --force -f /gke_app
+```
+
+
 
 ## Clean up
 
