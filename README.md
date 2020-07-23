@@ -1,6 +1,7 @@
 # Consul Gateways Demo
-This code creates a demonstration environment to show the usage of Consul service mesh with mesh, terminating and ingress gateways. 
+This code creates a demonstration environment to show the usage of Consul service mesh with mesh, terminating and ingress gateways.
 
+This code is built on the connected clouds repository from David Wright: https://github.com/dawright22/connected-clouds
 
 
 ## Pre-requirements 
