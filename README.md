@@ -127,6 +127,7 @@ kubectl get svc
 ```
 
 The public address will be displayed as the External Address for the Consul UI. 
+
 Copy these public addresses into the file at app/02_gateway_config.sh
 
 Then run app/02_gateway_config.sh
@@ -138,6 +139,7 @@ The application is now ready to demo. Access the application through the public 
 
 The application uses three images to show different aspects of the Service Mesh. 
 The images are defined in /app/gke_app/gke_app.yaml
+
 Check line 101
 ```yaml
 image: dgkirkwood/frontend:4.1
@@ -157,12 +159,15 @@ kubectl apply --force -f /gke_app
 
 ## Clean up
 
-To delete your enviroments you need to run
+To remove the environment you will first need to delete the application and the Consul deployments as if you try to run a Terraform destroy you will run into problems with the LBs created by the Kube cluster. 
 
-./3.clean.sh in the main directory
+To ensure cleanup is successful first run app/03_cleanup.sh
 
-then run terraform destroy
+Then run 
+```hcl
+terraform destroy
+```
 
-To clean up you will want to remove the user profile from your kubeconfig
+Ensure to clean up the contexts and user profiles from your local kubectl config.
 
 
