@@ -1,0 +1,10 @@
+{
+    "Kind": "terminating-gateway",
+    "Name": "external-services",
+    "Services": [
+      {
+        "Name": "mysql"
+      }
+    ]
+  }
+

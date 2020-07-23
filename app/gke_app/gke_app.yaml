@@ -1,0 +1,121 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: checkout
+
+spec:
+  selector:
+    matchLabels:
+      app: checkout
+  template:
+    metadata:
+      annotations:
+        'consul.hashicorp.com/connect-inject': 'true'
+        'consul.hashicorp.com/connect-service': 'checkout'
+      labels:
+        app: checkout
+    spec:
+      terminationGracePeriodSeconds: 5
+      containers:
+      - name: checkout
+        image: dgkirkwood/checkout:latest
+        ports:
+        - containerPort: 5001
+        env:
+        - name: PORT
+          value: "5001"
+        # - name: DISABLE_TRACING
+        #   value: "1"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+
+---
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payments
+
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: payments
+  template:
+    metadata:
+      annotations:
+        'consul.hashicorp.com/connect-inject': 'true'
+        'consul.hashicorp.com/connect-service': 'payments'
+      labels:
+        app: payments
+    spec:
+      terminationGracePeriodSeconds: 5
+      containers:
+      - name: payments
+        image: dgkirkwood/payments:latest
+        ports:
+        - containerPort: 5003
+        env:
+        - name: PORT
+          value: "5003"
+        # - name: DISABLE_TRACING
+        #   value: "1"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+
+---
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      annotations:
+        'consul.hashicorp.com/connect-inject': 'true'
+        'consul.hashicorp.com/connect-service': 'frontend'
+        'consul.hashicorp.com/connect-service-upstreams': 'checkout:5001, recommendations:5002:dc-aws, payments:5003, mysql:3306:dc-aws'
+      labels:
+        app: frontend
+    spec:
+      terminationGracePeriodSeconds: 5
+      containers:
+      - name: frontend
+        image: dgkirkwood/frontend:4.1
+        ports:
+        - containerPort: 5000
+        env:
+        - name: PORT
+          value: "5000"
+        - name: HOST_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        # - name: DISABLE_TRACING
+        #   value: "1"
+        resources:
+          requests:
+            cpu: 200m
+            memory: 128Mi
+          limits:
+            cpu: 400m
+            memory: 256Mi
+
+---

@@ -1,0 +1,52 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recommendations
+
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: recommendations
+  template:
+    metadata:
+      annotations:
+        'consul.hashicorp.com/connect-inject': 'true'
+        'consul.hashicorp.com/connect-service': 'recommendations'
+      labels:
+        app: recommendations
+    spec:
+      terminationGracePeriodSeconds: 5
+      containers:
+      - name: recommendations
+        image: dgkirkwood/recommendations:latest
+        ports:
+        - containerPort: 5002
+        env:
+        - name: PORT
+          value: "5002"
+        # - name: DISABLE_TRACING
+        #   value: "1"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: recommendations
+spec:
+  type: ClusterIP
+  selector:
+    app: recommendations
+  ports:
+  - protocol: TCP
+    port: 5002
+    targetPort: 5002
+---
+
