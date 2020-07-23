@@ -4,7 +4,7 @@ This code creates a demonstration environment to show the usage of Consul servic
 This code is built on the connected clouds repository from David Wright: https://github.com/dawright22/connected-clouds
 
 
-## Pre-requirements 
+## Pre-requisites
 
 * Install Terraform 0.12 or higher
 
