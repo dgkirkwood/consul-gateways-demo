@@ -12,6 +12,7 @@ spec:
       annotations:
         'consul.hashicorp.com/connect-inject': 'true'
         'consul.hashicorp.com/connect-service': 'checkout'
+        'consul.hashicorp.com/connect-service-protocol': 'http'
       labels:
         app: checkout
     spec:
@@ -40,25 +41,27 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: payments
+  name: payments1
 
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: payments
+      app: payments1
   template:
     metadata:
       annotations:
         'consul.hashicorp.com/connect-inject': 'true'
         'consul.hashicorp.com/connect-service': 'payments'
+        'consul.hashicorp.com/connect-service-protocol': 'http'
+        'consul.hashicorp.com/service-meta-version': 'v1.1'
       labels:
-        app: payments
+        app: payments1
     spec:
       terminationGracePeriodSeconds: 5
       containers:
-      - name: payments
-        image: dgkirkwood/payments:latest
+      - name: payments1
+        image: dgkirkwood/payments:1.1
         ports:
         - containerPort: 5003
         env:
@@ -77,6 +80,48 @@ spec:
 ---
 
 
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payments2
+
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: payments2
+  template:
+    metadata:
+      annotations:
+        'consul.hashicorp.com/connect-inject': 'true'
+        'consul.hashicorp.com/connect-service': 'payments'
+        'consul.hashicorp.com/connect-service-protocol': 'http'
+        'consul.hashicorp.com/service-meta-version': 'v1.2'
+      labels:
+        app: payments2
+    spec:
+      terminationGracePeriodSeconds: 5
+      containers:
+      - name: payments2
+        image: dgkirkwood/payments:1.2
+        ports:
+        - containerPort: 5003
+        env:
+        - name: PORT
+          value: "5003"
+        # - name: DISABLE_TRACING
+        #   value: "1"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+
+---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -92,13 +137,14 @@ spec:
         'consul.hashicorp.com/connect-inject': 'true'
         'consul.hashicorp.com/connect-service': 'frontend'
         'consul.hashicorp.com/connect-service-upstreams': 'checkout:5001, recommendations:5002:dc-aws, payments:5003, mysql:3306:dc-aws'
+        'consul.hashicorp.com/connect-service-protocol': 'tcp'
       labels:
         app: frontend
     spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: frontend
-        image: dgkirkwood/frontend:4.1
+        image: dgkirkwood/frontend:4.3
         ports:
         - containerPort: 5000
         env:

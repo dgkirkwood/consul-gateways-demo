@@ -2,7 +2,7 @@
   "ID": "mysql",
   "Name": "mysql",
   "Tags": ["rds", "aws"],
-  "Address": "<REPLACE_WITH_RDS_IP>",
+  "Address": "10.0.1.136",
   "Port": 3306,
   "Meta": {
     "mysql_version": "5.7"
@@ -10,7 +10,7 @@
   "EnableTagOverride": false,
   "Check": {
     "name": "tcp on port 3306",
-    "tcp": "<REPLACE_WITH_RDS_IP>:3306",
+    "tcp": "10.0.1.136:3306",
     "interval": "10s",
     "timeout": "1s"
   }

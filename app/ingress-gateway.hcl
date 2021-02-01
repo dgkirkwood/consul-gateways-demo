@@ -4,7 +4,7 @@ Name = "ingress-gateway"
 Listeners = [
  {
    Port = 5000
-   Protocol = "tcp"
+   Protocol = "http"
    Services = [
      {
        Name = "frontend"

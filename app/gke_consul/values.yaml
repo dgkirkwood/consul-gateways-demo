@@ -1,6 +1,6 @@
 global:
   name: consul
-  image: "consul:1.8.0"
+  image: "consul:1.9.1"
   datacenter: dc-GCP
 
   # TLS configures whether Consul components use TLS.
